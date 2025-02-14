@@ -1,0 +1,7 @@
+[project]
+name = "khrspeechcommander"
+version = "0.1.0"
+description = "Controller of KHR-3HV by speech"
+readme = "README.md"
+requires-python = "==3.12.8"
+dependencies = []
