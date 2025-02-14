@@ -33,7 +33,7 @@ SAMPLE_DIR := samples
 
 # Linker and compiler flags
 LDFLAGS := -lm
-CFLAGS := -DLIBRARY_BUILD -Wall -Wextra -g -Iinc
+CFLAGS := -DLIBRARY_BUILD -Wall -Wextra -g -Iinc -fPIC
 SAMPLES_CFLAGS := -Wall -g -Iinc
 ARFLAGS := rcs
 
