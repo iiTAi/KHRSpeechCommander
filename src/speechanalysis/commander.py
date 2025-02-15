@@ -1,13 +1,13 @@
 import numpy as np
 
-from connector import (
+from .connector import (
     connect_to_khr,
     disconnect_from_khr,
     init_command,
     add_command,
     send_commands,
 )
-from command_dict import (
+from .command_dict import (
     ics_dict,
     option_dict,
     direction_dict,

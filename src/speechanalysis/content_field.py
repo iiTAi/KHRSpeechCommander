@@ -3,7 +3,7 @@ from queue import Queue
 import flet as ft
 
 class ContentField(ft.TextField):
-    def __call__(self) -> None:
+    def __init__(self) -> None:
         super().__init__(
             multiline=True,
             read_only=True,)

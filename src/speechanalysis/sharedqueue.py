@@ -63,3 +63,16 @@ class SharedQueue:
         self.join_signal_q()
         self.join_speech_q()
         self.join_morpheme_q()
+
+    def is_signal_q_empty(self) -> bool:
+        """Check if signal queue is empty"""
+        return self.__signal_q.empty()
+    
+    def is_speech_q_empty(self) -> bool:
+        """Check if speech queue is empty"""
+        return self.__speech_q.empty()
+    
+    def is_morpheme_q_empty(self) -> bool:
+        """Check if morpheme queue is empty"""
+        return self.__morpheme_q.empty()
+    

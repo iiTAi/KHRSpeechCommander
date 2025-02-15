@@ -7,14 +7,14 @@ import pyaudio
 import speech_recognition as sr
 from MeCab import Tagger
 
-from commander import Commander
-from command_dict import (
+from .commander import Commander
+from .command_dict import (
     ics_dict,
     option_dict,
     direction_dict,
 )
-from sharedqueue import SharedQueue
-from content_field import ContentField
+from .sharedqueue import SharedQueue
+from .content_field import ContentField
 
 
 SAMPLE_RATE = 16000
@@ -31,6 +31,8 @@ PRINT_INTERVAL = 0.05
 
 
 class __StateManager:
+    """State manager for processes"""
+
     def __init__(self):
         self.is_recording = True
         self.is_recognizing = True
@@ -51,6 +53,7 @@ class __StateManager:
 
 
 def init() -> None:
+    """Initialize commander"""
     global commander
 
     commander = Commander()
@@ -58,6 +61,11 @@ def init() -> None:
 
 
 def run(cf: ContentField) -> None:
+    """Run speech analysis
+
+    Args:
+        cf (ContentField): ContentField for updating value
+    """
     global commander
     global s_queue
     global state
@@ -67,22 +75,26 @@ def run(cf: ContentField) -> None:
 
     recording_thread = threading.Thread(
         target=__recording_process,
-        args=(s_queue, state,))
+        args=(s_queue, state,),
+        daemon=True,)
     recording_thread.start()
 
     recognition_thread = threading.Thread(
         target=__recognition_process,
-        args=(s_queue, state,))
+        args=(s_queue, state,),
+        daemon=True,)
     recognition_thread.start()
 
     printing_thread = threading.Thread(
         target=__printing_process,
-        args=(s_queue, state, cf,))
+        args=(s_queue, state, cf,),
+        daemon=True,)
     printing_thread.start()
 
     analyzing_thread = threading.Thread(
         target=__analyzing_process,
-        args=(s_queue, commander, state,))
+        args=(s_queue, commander, state,),
+        daemon=True,)
     analyzing_thread.start()
 
     state.start_processes()
@@ -91,9 +103,11 @@ def run(cf: ContentField) -> None:
     recognition_thread.join()
     printing_thread.join()
     analyzing_thread.join()
+    print("Processes finished correctly")
 
 
 def stop() -> None:
+    """Stop speech analysis"""
     global commander
     global state
     
@@ -104,6 +118,12 @@ def stop() -> None:
 def __recording_process(
         s_queue: SharedQueue,
         state: __StateManager,) -> None:
+    """Recording process
+
+    Args:
+        s_queue (SharedQueue): SharedQueue for signal
+        state (__StateManager): State manager
+    """
     audio = pyaudio.PyAudio()
     stream = audio.open(
         format=FORMAT,
@@ -144,7 +164,16 @@ def __recording_process(
 def __recognition_process(
         s_queue: SharedQueue,
         state: __StateManager,) -> None:
+    """Recognition process
+
+    Args:
+        s_queue (SharedQueue): SharedQueue for signal and morpheme
+        state (__StateManager): State manager
+    """
     while state.is_recognizing:
+        if s_queue.is_signal_q_empty():
+            time.sleep(0.25)
+            continue
         signal = s_queue.get_from_signal_q()
         recognized_text = __signal_to_text(signal)
         if recognized_text == FINISH_KEYWORD:
@@ -173,6 +202,14 @@ def __recognition_process(
 
 def __signal_to_text(
         signal: bytes,) -> str:
+    """Convert signal to text
+
+    Args:
+        signal (bytes): signal
+
+    Returns:
+        str: recognized text
+    """
     loss_bytes = len(signal) % (SAMPLE_RATE * 2)
     if loss_bytes != 0:
         signal += b'\x00' * (SAMPLE_RATE * 2 - loss_bytes)
@@ -195,6 +232,14 @@ def __signal_to_text(
 
 def __morpheme_analysis(
         text: str,) -> list:
+    """Analyze morphemes from text
+
+    Args:
+        text (str): text
+
+    Returns:
+        list: morphemes
+    """
     wakati = Tagger("-Owakati")
     morphemes = wakati.parse(text).split()
     del wakati
@@ -205,7 +250,17 @@ def __printing_process(
         s_queue: SharedQueue,
         state: __StateManager,
         cf: ContentField,) -> None:
+    """Printing process
+
+    Args:
+        s_queue (SharedQueue): SharedQueue for speech
+        state (__StateManager): State manager
+        cf (ContentField): ContentField for updating value
+    """
     while state.is_printing:
+        if s_queue.is_speech_q_empty():
+            time.sleep(0.25)
+            continue
         speech_c = s_queue.get_from_speech_q()
         cf.update_value(speech_c)
         s_queue.done_speech_q()
@@ -216,7 +271,17 @@ def __analyzing_process(
         s_queue: SharedQueue,
         commander: Commander,
         state: __StateManager,) -> None:
+    """Command analyzing process
+
+    Args:
+        s_queue (SharedQueue): SharedQueue for morpheme
+        commander (Commander): Commander for sending commands
+        state (__StateManager): State manager
+    """
     while state.is_analyzing:
+        if s_queue.is_morpheme_q_empty():
+            time.sleep(0.25)
+            continue
         morpheme = s_queue.get_from_morpheme_q()
         
         if morpheme in ics_dict and commander.fetch_option() == 1:
