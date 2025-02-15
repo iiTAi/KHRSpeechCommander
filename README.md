@@ -18,8 +18,18 @@ CFLAGS := -DLIBRARY_BUILD -Wall -Wextra -g -Iinc
 CFLAGS := -DLIBRARY_BUILD -Wall -Wextra -g -Iinc -fPIC
 ```
 
+## How to use?
+環境構築をしたうえで、ヘッドセットやロボットを接続してからアプリ（KHRSpeechCommander.py）を実行し、Runボタンを押すと音声認識が開始します。「右腕を上げて」「右腕と左腕をちょっと開いて」などと命令すると、ロボットが指示通りに動きます。Stopボタンを押すか、「終了」というまで音声認識のプロセスは継続します。
+
+「部位」「程度」「動作」により制御します。
+
 ## Execution environment
 開発環境はWSL2上のUbuntu-22.04になります。当アプリケーションはLinuxでの動作を想定しています。
 
-実行環境の用意のために、以下の手順を踏む必要があります。
-(後で記述)
+実行のために、以下の準備が必要になります。具体的な手順は省略します。
+- usbipdの導入と設定
+- KHR-3HVの接続設定
+- pulseaudioの設定
+- GUIアプリケーションの日本語化
+- C言語ライブラリの生成
+- MeCabの導入と設定
