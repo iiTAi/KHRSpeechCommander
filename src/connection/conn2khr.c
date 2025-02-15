@@ -39,4 +39,17 @@ extern int init(void) {
     rcb4_command_set_src_ram(comm, 0x0000, 2);
     rcb4_command_set_dst_com(comm);
     res_bytes = rcb4_send_command(conn, comm, serial_res);
+    
+    if (res_bytes < 0) {
+        printf("Error: reading system configuration\n");
+        deinit();
+        return -1;
+    } else if (res_bytes >= 2) {
+        printf("Configretion word = 0x%04X\n", *(uint16_t*)serial_res);
+    } else {
+        printf("Could not read the configration word correctly\n");
+    }
+
+    comm_const = rcb4_command_create(RCB4_COMM_CONST);
+    printf("Connection established\n");
 }
