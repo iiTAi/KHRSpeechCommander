@@ -5,13 +5,17 @@ lib = ctypes.CDLL(LIB_PATH)
 
 
 def connect_to_khr() -> int:
-    """Connect to KHR-2HV"""
+    """Connect to KHR-3HV
+
+    Returns:
+        int: 0 if success, -1 if fail
+    """
     return lib.init()
 
 
-def disconnect_from_khr() -> int:
-    """Disconnect from KHR-2HV"""
-    return lib.deinit()
+def disconnect_from_khr() -> None:
+    """Disconnect from KHR-3HV"""
+    lib.deinit()
 
 
 def init_command(speed: int=50) -> int:
