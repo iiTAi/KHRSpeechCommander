@@ -8,7 +8,6 @@
 
 rcb4_connection* conn;
 rcb4_comm* comm = NULL;
-rcb4_comm* comm_const = NULL;
 
 uint8_t serial_res[256];
 int res_bytes;
@@ -33,7 +32,6 @@ typedef enum {
 
 extern int deinit(void) {
     rcb4_command_delete(comm);
-    rcb4_command_delete(comm_const);
     rcb4_deinit(conn);
     isConnInitialized = 0;
     isCommInitialized = 0;
@@ -67,7 +65,6 @@ extern int init(void) {
         printf("Could not read the configration word correctly\n");
     }
 
-    comm_const = rcb4_command_create(RCB4_COMM_CONST);
     isConnInitialized = 1;
     printf("Connection established\n");
 }
@@ -94,7 +91,7 @@ extern int add_command(SERVO_NAME ics, uint8_t speed, uint16_t pos) {
         printf("Command not initialized\n");
         return -1;
     }
-    rcb4_command_add_servo(comm, ics, speed, pos);
+    rcb4_command_set_servo(comm, ics, speed, pos);
     printf("Command added\n");
 
     return 0;
