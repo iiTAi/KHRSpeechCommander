@@ -1,7 +1,8 @@
 # KHRSpeechCommander
 
 ## What's this?
-KHRSpeechCommanderは日本語の音声により、近藤科学のKHR-3HVを操作するPythonアプリケーションです。（未完成）
+KHRSpeechCommanderは日本語の音声により、近藤科学のKHR-3HVを操作するPythonアプリケーションです。
+キーボードを使わないため、誰でも簡単にロボットを制御できます。
 
 Anthony Zhang氏の[SpeechRecognition](https://pypi.org/project/SpeechRecognition/)により認識した音声のテキストをMeCab([macab-python3](https://pypi.org/project/mecab-python3/))で分かち書きし、得られた形態素から命令を生成します。（シリアル）通信にはneko90氏のCライブラリ[librcb4](https://github.com/nake90/librcb4)を使用しました。
 
@@ -38,3 +39,10 @@ CFLAGS := -DLIBRARY_BUILD -Wall -Wextra -g -Iinc -fPIC
 
 ## License
 当アプリケーションは使用したライブラリ及びフレームワークに基づき、`Apache License`、`GPL3`、`BSD3`ライセンスに準拠します。
+
+- [SpeechRecognition](https://pypi.org/project/SpeechRecognition/): 2014- Anthony Zhang (Uberi).
+- [macab-python3](https://pypi.org/project/mecab-python3/): 2014- tatsuro.
+- [librcb4](https://github.com/nake90/librcb4): 2015 Alfonso Arbona Gimeno (nake90).
+- [Numpy](https://pypi.org/project/numpy/): 2005-2024 Travis E. Oliphant et al.
+- [PyAudio](https://pypi.org/project/PyAudio/): 2006-2023 Hubert Pham
+- [Flet](https://pypi.org/project/flet/): 2022- Appveyor Systems Inc.
